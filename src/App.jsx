@@ -26,15 +26,6 @@ export default function App() {
   const [navTab, setNavTab]   = useState("main");
   const [toast, setToast]     = useState(null);
   const [loading, setLoading] = useState(true);
-  const [settings, setSettings] = useState(null);
-
-// ── ROOT APP ──────────────────────────────────────────────────────────────────
-export default function App() {
-  const [page, setPage]       = useState("main");
-  const [pageData, setPageData] = useState(null);
-  const [navTab, setNavTab]   = useState("main");
-  const [toast, setToast]     = useState(null);
-  const [loading, setLoading] = useState(true);
   const [settings, setSettings] = useState({});
 
   // Переключение на отель по URL параметру
@@ -51,10 +42,8 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    // Подписываемся на изменения settings
     const unsubscribe = db.subscribe("settings", (s) => {
       setSettings(s || {});
-      // Даём небольшую задержку чтобы показать контент
       setTimeout(() => setLoading(false), 100);
     });
     return unsubscribe;
