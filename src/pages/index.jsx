@@ -902,7 +902,7 @@ const DEFAULT_LOYALTY_LEVELS = [
 
 export function PageAccount({ goTo, showToast }) {
   const user = bridge.initDataUnsafe?.user;
-  const [tab, setTab] = useState("bookings");
+  const [tab, setTab] = useState("loyalty");
   const [guestProfile, setGuestProfile] = useState(() => db.get("guestProfile") || { bonuses: 0, totalNights: 0, totalVisits: 0, phone: "", name: "", amoContactId: null, favorites: [] });
   const [amoSyncing, setAmoSyncing] = useState(false);
   const contacts = db.get("contacts");
@@ -1089,11 +1089,13 @@ export function PageAccount({ goTo, showToast }) {
 
       {/* ── ТАБЫ ── */}
       <div style={{ padding: "14px 16px 0" }}>
-        <Pills
-          items={TAB_LABELS}
-          active={TAB_LABELS[TAB_KEYS.indexOf(tab)]}
-          onChange={v => setTab(TAB_KEYS[TAB_LABELS.indexOf(v)])}
-        />
+        <div style={{ display: "flex", justifyContent: "center" }}>
+          <Pills
+            items={TAB_LABELS}
+            active={TAB_LABELS[TAB_KEYS.indexOf(tab)]}
+            onChange={v => setTab(TAB_KEYS[TAB_LABELS.indexOf(v)])}
+          />
+        </div>
 
         {/* ── ТАБ: ЛОЯЛЬНОСТЬ ── */}
         {tab === "loyalty" && (
