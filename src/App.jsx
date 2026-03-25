@@ -27,6 +27,15 @@ export default function App() {
   const [toast, setToast]     = useState(null);
   const [settings, setSettings] = useState(() => db.get("settings"));
 
+  // Переключение на отель по URL параметру
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const hotelId = params.get("hotel");
+    if (hotelId) {
+      db.switchTo("hygge_db_" + hotelId);
+    }
+  }, []);
+
   useEffect(() => { bridge.ready(); }, []);
   useEffect(() => { return db.subscribe("settings", setSettings); }, []);
 

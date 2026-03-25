@@ -55,8 +55,10 @@ export async function registerHotel({ name, login, password, email = "" }) {
     throw new Error(`Логин «${login}» уже занят`);
 
   const passwordHash = await hashPassword(password);
+  // Генерируем короткий ID из timestamp (9 цифр для уникальности)
+  const hotelId = Date.now().toString().slice(-9);
   const hotel = {
-    id: Date.now().toString(),
+    id: hotelId,
     name: name.trim(),
     login: login.trim(),
     email: email.trim().toLowerCase(),

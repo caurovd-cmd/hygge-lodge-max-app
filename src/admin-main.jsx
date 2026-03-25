@@ -381,8 +381,19 @@ function AdminApp() {
 
   // Восстанавливаем db namespace при загрузке
   useEffect(() => {
-    const hotelId = sessionStorage.getItem(S.superHotel) || sessionStorage.getItem(S.hotelId);
-    if (hotelId) db.switchTo("hygge_db_" + hotelId);
+    // Проверяем URL параметр hotel
+    const params = new URLSearchParams(window.location.search);
+    const urlHotelId = params.get("hotel");
+    
+    // Если есть URL параметр - используем его
+    if (urlHotelId) {
+      sessionStorage.setItem(S.hotelId, urlHotelId);
+      db.switchTo("hygge_db_" + urlHotelId);
+    } else {
+      // Иначе восстанавливаем из sessionStorage
+      const hotelId = sessionStorage.getItem(S.superHotel) || sessionStorage.getItem(S.hotelId);
+      if (hotelId) db.switchTo("hygge_db_" + hotelId);
+    }
   }, []);
 
   // Обработчик выхода
