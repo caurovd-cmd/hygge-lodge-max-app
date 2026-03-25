@@ -1294,6 +1294,16 @@ export function AdminPanel({ onExit, onLogout, isSuperAdmin = false, showToast }
   const [page, setPage] = useState("dashboard");
   const settings = db.get("settings");
 
+  // Переключение на отель по URL параметру при загрузке
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const hotelId = params.get("hotel");
+    if (hotelId) {
+      sessionStorage.setItem("h_ai", hotelId);
+      db.switchTo("hygge_db_" + hotelId);
+    }
+  }, []);
+
   // Поддержка динамического обработчика выхода (для суперадмина)
   const handleLogout = () => {
     if (typeof window.__adminLogoutHandler === "function") {
@@ -1343,6 +1353,30 @@ export function AdminPanel({ onExit, onLogout, isSuperAdmin = false, showToast }
               color: "rgba(234,179,8,.9)",
             }}>🛡️ Суперадмин</div>
           )}
+          {/* Ссылка на мини-приложение */}
+          {(() => {
+            const params = new URLSearchParams(window.location.search);
+            const hotelId = params.get("hotel") || sessionStorage.getItem("h_sh") || sessionStorage.getItem("h_ai");
+            if (!hotelId) return null;
+            const appUrl = `${window.location.origin}/?hotel=${hotelId}`;
+            const adminUrl = `${window.location.origin}/admin.html?hotel=${hotelId}`;
+            return (
+              <div style={{ marginTop: 12, fontSize: 11 }}>
+                <div style={{ color: "var(--t3)", marginBottom: 4 }}>🔗 Ссылки отеля:</div>
+                <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+                  <a href={appUrl} target="_blank" rel="noopener noreferrer" style={{ 
+                    color: "var(--green)", textDecoration: "none", fontSize: 11 
+                  }}>📱 Мини-приложение</a>
+                  <a href={adminUrl} target="_blank" rel="noopener noreferrer" style={{ 
+                    color: "var(--green)", textDecoration: "none", fontSize: 11 
+                  }}>⚙️ Админ-панель</a>
+                </div>
+                <div style={{ marginTop: 6, fontSize: 10, color: "var(--t3)" }}>
+                  ID: <span style={{ fontFamily: "monospace" }}>{hotelId}</span>
+                </div>
+              </div>
+            );
+          })()}
         </div>
         <div className="sidebar-nav">
           {nav.map(n => (

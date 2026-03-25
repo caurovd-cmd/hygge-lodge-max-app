@@ -497,6 +497,17 @@ function SuperPanel({ onLogout, showToast }) {
                     <span>ID: {hotel.id}</span>
                     <span>📅 {new Date(hotel.createdAt).toLocaleDateString("ru-RU", { day: "numeric", month: "short", year: "numeric" })}</span>
                   </div>
+                  {/* Ссылки на отель */}
+                  <div style={{ marginTop: 8, display: "flex", gap: 8, flexWrap: "wrap" }}>
+                    <a href={`?hotel=${hotel.id}`} target="_blank" rel="noopener noreferrer" style={{
+                      fontSize: 11, color: "var(--green)", textDecoration: "none",
+                      background: "rgba(90,180,70,.1)", padding: "3px 8px", borderRadius: 4,
+                    }}>📱 Мини-приложение</a>
+                    <a href={`admin.html?hotel=${hotel.id}`} target="_blank" rel="noopener noreferrer" style={{
+                      fontSize: 11, color: "var(--green)", textDecoration: "none",
+                      background: "rgba(90,180,70,.1)", padding: "3px 8px", borderRadius: 4,
+                    }}>⚙️ Админ-панель</a>
+                  </div>
                 </div>
 
                 {/* Action */}
