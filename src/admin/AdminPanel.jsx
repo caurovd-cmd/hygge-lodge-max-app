@@ -1167,6 +1167,7 @@ export function AdminPanel({ onExit, onLogout, isSuperAdmin = false, showToast }
     { id: "promos",    ico: "🏷️", label: "Акции" },
     { id: "reviews",   ico: "⭐", label: "Отзывы" },
     { id: "amocrm",   ico: "🔗", label: "AmoCRM" },
+    { id: "loyalty",  ico: "🎁", label: "Лояльность" },
     { id: "settings",  ico: "⚙️", label: "Настройки" },
   ];
 
@@ -1233,7 +1234,112 @@ export function AdminPanel({ onExit, onLogout, isSuperAdmin = false, showToast }
     promos:    <AdminPromos showToast={showToast} />,
     reviews:   <AdminReviews showToast={showToast} />,
     amocrm:   <AdminAmoCRM showToast={showToast} />,
+    loyalty:  <AdminLoyalty showToast={showToast} />,
     settings:  <AdminSettings showToast={showToast} />,
+  };
+
+  // ── ADMIN: ЛОЯЛЬНОСТЬ ───────────────────────────────────────────────────────
+  const AdminLoyalty = () => {
+    const [settings, setSettings] = useState(() => db.get("settings") || {});
+    const [bonusPercent, setBonusPercent] = useState(() => settings?.loyalty?.bonusPercent || 5);
+    const [levels, setLevels] = useState(() => settings?.loyalty?.levels || [
+      { name: "Новичок", emoji: "🌱", minNights: 0, discount: 0, perks: ["Добро пожаловать!"] },
+      { name: "Постоянный", emoji: "🏕️", minNights: 3, discount: 5, perks: ["Скидка 5%", "Ранний заезд"] },
+      { name: "VIP", emoji: "🌟", minNights: 10, discount: 10, perks: ["Скидка 10%", "Поздний выезд", "Подарок"] },
+    ]);
+
+    useEffect(() => { return db.subscribe("settings", s => { setSettings(s); setBonusPercent(s?.loyalty?.bonusPercent || 5); setLevels(s?.loyalty?.levels || []); }); }, []);
+
+    const save = () => {
+      const updated = { 
+        ...settings, 
+        loyalty: { bonusPercent, levels } 
+      };
+      db.set("settings", updated);
+      showToast("Настройки лояльности сохранены");
+    };
+
+    const addLevel = () => {
+      setLevels([...levels, { name: "Новый уровень", emoji: "⭐", minNights: 0, discount: 0, perks: ["Бонус"] }]);
+    };
+
+    const updateLevel = (idx, field, value) => {
+      const newLevels = [...levels];
+      newLevels[idx] = { ...newLevels[idx], [field]: value };
+      setLevels(newLevels);
+    };
+
+    const removeLevel = (idx) => {
+      if (levels.length <= 1) { showToast("Должен быть хотя бы один уровень"); return; }
+      setLevels(levels.filter((_, i) => i !== idx));
+    };
+
+    return (
+      <div className="admin-page">
+        <div className="admin-page-title">🎁 Программа лояльности</div>
+        
+        {/* Процент начисления */}
+        <div style={{ background: "linear-gradient(145deg, #1a1a1a 0%, #141414 100%)", borderRadius: 16, padding: 20, marginBottom: 16, border: "1px solid #2a2a2a" }}>
+          <div style={{ fontSize: 14, fontWeight: 700, marginBottom: 12, color: "#fff" }}>% начисления бонусов</div>
+          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+            <input 
+              className="inp" 
+              type="number" 
+              value={bonusPercent} 
+              onChange={e => setBonusPercent(parseInt(e.target.value) || 0)}
+              style={{ width: 80 }}
+            />
+            <span style={{ color: "#888" }}>% от суммы брони</span>
+          </div>
+        </div>
+
+        {/* Уровни */}
+        <div style={{ fontSize: 14, fontWeight: 700, marginBottom: 12, color: "#fff" }}>Уровни лояльности</div>
+        
+        {levels.map((level, idx) => (
+          <div key={idx} style={{ background: "linear-gradient(145deg, #1a1a1a 0%, #141414 100%)", borderRadius: 16, padding: 20, marginBottom: 12, border: "1px solid #2a2a2a" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
+              <span style={{ fontSize: 12, color: "#666" }}>Уровень {idx + 1}</span>
+              {levels.length > 1 && (
+                <button 
+                  onClick={() => removeLevel(idx)}
+                  style={{ background: "#dc2626", color: "#fff", border: "none", borderRadius: 6, padding: "4px 10px", fontSize: 12, cursor: "pointer" }}
+                >
+                  Удалить
+                </button>
+              )}
+            </div>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 80px", gap: 10, marginBottom: 10 }}>
+              <input className="inp" placeholder="Название" value={level.name} onChange={e => updateLevel(idx, "name", e.target.value)} />
+              <input className="inp" placeholder="Эмодзи" value={level.emoji} onChange={e => updateLevel(idx, "emoji", e.target.value)} />
+            </div>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 10 }}>
+              <div>
+                <label style={{ fontSize: 10, color: "#666", display: "block", marginBottom: 4 }}>Мин. ночей</label>
+                <input className="inp" type="number" value={level.minNights} onChange={e => updateLevel(idx, "minNights", parseInt(e.target.value) || 0)} />
+              </div>
+              <div>
+                <label style={{ fontSize: 10, color: "#666", display: "block", marginBottom: 4 }}>Скидка %</label>
+                <input className="inp" type="number" value={level.discount} onChange={e => updateLevel(idx, "discount", parseInt(e.target.value) || 0)} />
+              </div>
+            </div>
+            <div>
+              <label style={{ fontSize: 10, color: "#666", display: "block", marginBottom: 4 }}>Привилегии (через запятую)</label>
+              <input className="inp" value={level.perks?.join(", ") || ""} onChange={e => updateLevel(idx, "perks", e.target.value.split(", ").map(s => s.trim()).filter(Boolean))} />
+            </div>
+          </div>
+        ))}
+
+        <button 
+          onClick={addLevel}
+          style={{ background: "#333", color: "#fff", border: "none", borderRadius: 10, padding: "12px 20px", fontSize: 13, cursor: "pointer", width: "100%", marginBottom: 16 }}
+        >
+          + Добавить уровень
+        </button>
+
+        <button className="btn btn-green" onClick={save}>Сохранить настройки</button>
+      </div>
+    );
   };
 
   return (
