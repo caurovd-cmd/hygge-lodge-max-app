@@ -532,7 +532,6 @@ function SuperPanel({ onLogout, showToast }) {
 // ─────────────────────────────────────────────────────────────────────────────
 // ROOT
 // ─────────────────────────────────────────────────────────────────────────────
-}
 
 function SuperAdminApp() {
   const [toast, setToast] = useState(null);
