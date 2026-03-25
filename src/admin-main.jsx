@@ -3,9 +3,8 @@ import ReactDOM from "react-dom/client";
 import "./styles.css";
 import { AdminPanel } from "./admin/AdminPanel.jsx";
 import { Toast } from "./components/UI.jsx";
-import db from "./db/database.js";
-import { registerHotel, loginHotel, resetHotelPassword } from "./db/hotelRegistry.js";
-import { registerEmail, sendResetOtp, verifyOtp } from "./hooks/useEmailApi.js";
+import remoteDB from "./db/remoteDB.js";
+import * as api from "./db/apiClient.js";
 
 // ── SESSION KEYS ──────────────────────────────────────────────────────────────
 const S = {
@@ -131,8 +130,8 @@ function AuthScreen({ onLogin }) {
     if (!login.trim() || !password) { setError("Заполните все поля"); return; }
     setLoading(true); setError("");
     try {
-      const hotel = await loginHotel(login.trim().toLowerCase(), password);
-      db.switchTo("hygge_db_" + hotel.id, hotel.name);
+      const hotel = await api.loginHotel(login.trim().toLowerCase(), password);
+      remoteDB.loadHotel(hotel.id);
       sessionStorage.setItem(S.session, "1");
       sessionStorage.setItem(S.hotelId, hotel.id);
       onLogin(hotel);
@@ -152,10 +151,8 @@ function AuthScreen({ onLogin }) {
     if (password !== confirm)          { setError("Пароли не совпадают"); return; }
     setLoading(true); setError("");
     try {
-      const hotel = await registerHotel({ name: hotelName.trim(), login: login.trim().toLowerCase(), password, email });
-      // Сохраняем email на бэкенде и отправляем welcome-письмо
-      await registerEmail(hotel.login, email, hotel.name);
-      db.switchTo("hygge_db_" + hotel.id, hotel.name);
+      const hotel = await api.registerHotel({ name: hotelName.trim(), login: login.trim().toLowerCase(), password, email });
+      remoteDB.loadHotel(hotel.id);
       sessionStorage.setItem(S.session, "1");
       sessionStorage.setItem(S.hotelId, hotel.id);
       onLogin(hotel);
@@ -171,7 +168,7 @@ function AuthScreen({ onLogin }) {
     if (!em || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)) { setError("Введите корректный email"); return; }
     setLoading(true); setError(""); setInfo("");
     try {
-      await sendResetOtp(em);
+      await api.sendResetOtp(em);
       setInfo("Если этот email зарегистрирован — код отправлен.");
       setMode("reset_otp");
     } catch (ex) {
@@ -187,11 +184,11 @@ function AuthScreen({ onLogin }) {
     if (newPass !== newPassConf)         { setError("Пароли не совпадают"); return; }
     setLoading(true); setError("");
     try {
-      const res = await verifyOtp(resetEmail.trim().toLowerCase(), otp.trim());
+      const res = await api.verifyOtp(resetEmail.trim().toLowerCase(), otp.trim());
       const login = res.login || verifiedLogin;
       if (!login) throw new Error("Не удалось определить аккаунт. Запросите код повторно.");
       setVerifiedLogin(login);
-      await resetHotelPassword(login, newPass);
+      await api.resetPassword(login, newPass);
       setInfo("✅ Пароль успешно изменён");
       setTimeout(() => setMode("login"), 1500);
     } catch (ex) {
@@ -388,11 +385,11 @@ function AdminApp() {
     // Если есть URL параметр - используем его
     if (urlHotelId) {
       sessionStorage.setItem(S.hotelId, urlHotelId);
-      db.switchTo("hygge_db_" + urlHotelId);
+      remoteDB.loadHotel(urlHotelId);
     } else {
       // Иначе восстанавливаем из sessionStorage
       const hotelId = sessionStorage.getItem(S.superHotel) || sessionStorage.getItem(S.hotelId);
-      if (hotelId) db.switchTo("hygge_db_" + hotelId);
+      if (hotelId) remoteDB.loadHotel(hotelId);
     }
   }, []);
 

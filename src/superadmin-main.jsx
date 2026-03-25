@@ -2,8 +2,8 @@ import React, { useState, useEffect, useRef } from "react";
 import ReactDOM from "react-dom/client";
 import "./styles.css";
 import { Toast } from "./components/UI.jsx";
-import db from "./db/database.js";
-import { getHotels, registerHotel } from "./db/hotelRegistry.js";
+import remoteDB from "./db/remoteDB.js";
+import * as api from "./db/apiClient.js";
 import { getSuperAdmin, setupSuperAdmin, loginSuperAdmin, changeSuperAdminPassword } from "./db/superAdmin.js";
 
 // ── SESSION ───────────────────────────────────────────────────────────────────
@@ -219,9 +219,8 @@ function CreateHotelModal({ onClose, onCreated }) {
     if (password !== confirm) { setError("Пароли не совпадают"); return; }
     setLoading(true);
     try {
-      const hotel = await registerHotel({ name: name.trim(), login, password });
-      // Инициализируем базу нового отеля с его именем
-      db.switchTo("hygge_db_" + hotel.id, hotel.name);
+      const hotel = await api.registerHotel({ name: name.trim(), login, password });
+      remoteDB.loadHotel(hotel.id);
       onCreated(hotel);
     } catch (ex) {
       setError(ex.message);
@@ -356,11 +355,15 @@ function ChangePasswordModal({ onClose, showToast }) {
 // ПАНЕЛЬ СУПЕРАДМИНА
 // ─────────────────────────────────────────────────────────────────────────────
 function SuperPanel({ onLogout, showToast }) {
-  const [hotels, setHotels]     = useState(() => getHotels());
+  const [hotels, setHotels]     = useState([]);
   const [showCreate, setShowCreate] = useState(false);
   const [showPass, setShowPass] = useState(false);
 
-  const refreshHotels = () => setHotels(getHotels());
+  useEffect(() => {
+    api.getHotels().then(setHotels).catch(console.error);
+  }, []);
+
+  const refreshHotels = () => api.getHotels().then(setHotels).catch(console.error);
 
   const handleCreated = (hotel) => {
     setShowCreate(false);

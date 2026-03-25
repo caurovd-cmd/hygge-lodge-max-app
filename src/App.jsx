@@ -1,7 +1,8 @@
 import { useState, useEffect, useCallback } from "react";
 import "./styles.css";
 import bridge from "./hooks/useBridge.js";
-import db from "./db/database.js";
+import remoteDB from "./db/remoteDB.js";
+import * as api from "./db/apiClient.js";
 import { Toast } from "./components/UI.jsx";
 import {
   PageMain, PageHomes, PageHomeDetail, PageServices,
@@ -33,7 +34,7 @@ export default function App() {
     const params = new URLSearchParams(window.location.search);
     const hotelId = params.get("hotel");
     if (hotelId) {
-      db.switchTo("hygge_db_" + hotelId);
+      remoteDB.loadHotel(hotelId);
     }
   }, []);
 
@@ -42,9 +43,9 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    const unsubscribe = db.subscribe("settings", (s) => {
+    const unsubscribe = remoteDB.subscribe("settings", (s) => {
       setSettings(s || {});
-      setTimeout(() => setLoading(false), 100);
+      setLoading(false);
     });
     return unsubscribe;
   }, []);
@@ -77,6 +78,15 @@ export default function App() {
   return (
     <>
       {toast && <Toast msg={toast} onDone={() => setToast(null)} />}
+      {loading && (
+        <div style={{ minHeight: "100dvh", display: "flex", alignItems: "center", justifyContent: "center", background: "linear-gradient(160deg, #1a2f1a 0%, #0d1a0d 100%)" }}>
+          <div style={{ textAlign: "center", color: "#86efac" }}>
+            <div style={{ fontSize: 48, marginBottom: 16 }}>🌿</div>
+            <div style={{ fontSize: 16, fontWeight: 600 }}>Загрузка...</div>
+          </div>
+        </div>
+      )}
+      {!loading && (
       <div className="app">
 
         {/* ШАПКА */}
@@ -109,6 +119,7 @@ export default function App() {
           </div>
         )}
       </div>
+      )}
     </>
   );
 }

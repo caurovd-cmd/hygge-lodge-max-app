@@ -220,6 +220,9 @@ class Database {
   subscribe(table, fn) {
     if (!this._listeners[table]) this._listeners[table] = [];
     this._listeners[table].push(fn);
+    if (this._data && this._data[table] !== undefined) {
+      fn(this._data[table]);
+    }
     return () => { this._listeners[table] = this._listeners[table].filter(f => f !== fn); };
   }
 
