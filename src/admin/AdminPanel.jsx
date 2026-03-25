@@ -1114,6 +1114,7 @@ export function AdminAmoCRM({ showToast }) {
 
 // ── ОБЁРТКА ВСЕЙ АДМИНКИ ──────────────────────────────────────────────────────
 export function AdminPanel({ onExit, onLogout, isSuperAdmin = false, showToast }) {
+  const [loading, setLoading] = useState(true);
   const [page, setPage] = useState("homes");
   const settings = db.get("settings");
 
@@ -1125,7 +1126,25 @@ export function AdminPanel({ onExit, onLogout, isSuperAdmin = false, showToast }
       sessionStorage.setItem("h_ai", hotelId);
       db.switchTo("hygge_db_" + hotelId);
     }
+    // Даем время на инициализацию БД
+    setTimeout(() => setLoading(false), 100);
   }, []);
+
+  if (loading) {
+    return (
+      <div style={{ 
+        minHeight: "100vh", 
+        background: "#0f0f0f", 
+        display: "flex", 
+        alignItems: "center", 
+        justifyContent: "center",
+        color: "#666",
+        fontSize: 14
+      }}>
+        Загрузка...
+      </div>
+    );
+  }
 
   // Поддержка динамического обработчика выхода (для суперадмина)
   const handleLogout = () => {
