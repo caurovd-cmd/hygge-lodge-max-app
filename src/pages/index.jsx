@@ -1172,17 +1172,11 @@ export function PageAccount({ goTo, showToast }) {
               Все домики глэмпинга. Сохраняйте любимые, нажав ♡.
             </div>
             {homes.map(h => {
-              const visited = bookings.some(b => b.homeId === h.id && b.status === "done");
               const fav = (guestProfile.favorites || []).includes(h.id);
               return (
                 <div key={h.id} style={{ background: "var(--white)", borderRadius: "var(--r)", boxShadow: "var(--sh)", marginBottom: 10, overflow: "hidden" }}>
                   <div style={{ position: "relative", cursor: "pointer" }} onClick={() => goTo("home-detail", h)}>
                     <img src={h.photo} alt={h.name} style={{ width: "100%", height: 130, objectFit: "cover", display: "block" }} />
-                    {visited && (
-                      <span style={{ position: "absolute", top: 8, left: 8, fontSize: 11, background: "var(--green)", color: "#fff", padding: "3px 10px", borderRadius: 12, fontWeight: 700 }}>
-                        ✓ Я здесь был
-                      </span>
-                    )}
                     <span style={{ position: "absolute", top: 8, right: 8, fontSize: 12, background: "rgba(0,0,0,0.45)", color: "#fff", padding: "3px 8px", borderRadius: 10 }}>
                       ⭐ {h.rating}
                     </span>
