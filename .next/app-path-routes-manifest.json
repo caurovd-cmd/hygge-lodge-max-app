@@ -1,8 +1,8 @@
 {
   "/api/hotels/[hotelId]/data/route": "/api/hotels/[hotelId]/data",
-  "/api/hotels/[hotelId]/settings/route": "/api/hotels/[hotelId]/settings",
   "/api/hotels/route": "/api/hotels",
-  "/api/test/route": "/api/test",
   "/_not-found/page": "/_not-found",
+  "/api/test/route": "/api/test",
+  "/api/hotels/[hotelId]/settings/route": "/api/hotels/[hotelId]/settings",
   "/page": "/"
 }
