@@ -1215,8 +1215,44 @@ export function AdminPanel({ onExit, onLogout, isSuperAdmin = false, showToast }
             </div>
           </div>
           <div style={{ marginTop: 10 }}>
-            <label style={{ fontSize: 10, color: "#666", display: "block", marginBottom: 4 }}>Фоновая картинка (URL)</label>
-            <input className="inp" placeholder="https://..." value={form.bgImage || ""} onChange={e => setForm(f => ({ ...f, bgImage: e.target.value }))} />
+            <label style={{ fontSize: 10, color: "#666", display: "block", marginBottom: 4 }}>Фоновая картинка</label>
+            <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
+              <label style={{
+                display: "inline-block", padding: "8px 16px", borderRadius: 8,
+                background: "#333", color: "#fff", cursor: "pointer", fontSize: 13
+              }}>
+                📁 Выбрать файл
+                <input 
+                  type="file" 
+                  accept="image/*" 
+                  style={{ display: "none" }}
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file) {
+                      const reader = new FileReader();
+                      reader.onload = (ev) => {
+                        setForm(f => ({ ...f, bgImage: ev.target?.result || "" }));
+                      };
+                      reader.readAsDataURL(file);
+                    }
+                  }}
+                />
+              </label>
+              {form.bgImage && (
+                <button 
+                  type="button"
+                  onClick={() => setForm(f => ({ ...f, bgImage: "" }))}
+                  style={{ background: "#dc2626", color: "#fff", border: "none", borderRadius: 6, padding: "6px 12px", fontSize: 12 }}
+                >
+                  Удалить
+                </button>
+              )}
+            </div>
+            {form.bgImage && (
+              <div style={{ marginTop: 8, maxWidth: 100 }}>
+                <img src={form.bgImage} alt="Preview" style={{ width: "100%", borderRadius: 8 }} />
+              </div>
+            )}
           </div>
           <div style={{ marginTop: 10 }}>
             <label style={{ fontSize: 10, color: "#666", display: "block", marginBottom: 4 }}>Прозрачность картинки: {form.bgOpacity ?? 0.5}</label>
