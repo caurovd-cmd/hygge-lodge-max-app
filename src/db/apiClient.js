@@ -1,7 +1,7 @@
 // ─── API CLIENT ─────────────────────────────────────────────────────────────
 // Server API integration for hotel data
 
-const API_BASE = 'http://95.140.155.14:3000/api';
+const API_BASE = '/api';
 
 async function fetchAPI(endpoint, options = {}) {
   const response = await fetch(`${API_BASE}${endpoint}`, {

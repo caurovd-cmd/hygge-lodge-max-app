@@ -1,17 +1,7 @@
 {
-  "rewrites": [
-    { "source": "/admin", "destination": "/admin.html" },
-    { "source": "/superadmin", "destination": "/superadmin.html" }
-  ],
-  "headers": [
-    {
-      "source": "/(.*)",
-      "headers": [
-        {
-          "key": "Content-Security-Policy",
-          "value": "default-src 'self' 'unsafe-inline' 'unsafe-eval' https: data:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https:; style-src 'self' 'unsafe-inline' https:; img-src 'self' data: https:; font-src 'self' data: https:; connect-src 'self' https:;"
-        }
-      ]
+  "functions": {
+    "api/**/*.js": {
+      "runtime": "nodejs18.x"
     }
-  ]
+  }
 }
