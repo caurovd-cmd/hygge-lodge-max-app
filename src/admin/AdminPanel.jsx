@@ -622,6 +622,38 @@ export function AdminSettings({ showToast }) {
     <div className="admin-page">
       <div className="admin-page-title">Настройки</div>
 
+      {/* ССЫЛКИ НА ОТЕЛЬ */}
+      {(() => {
+        const params = new URLSearchParams(window.location.search);
+        const hotelId = params.get("hotel") || sessionStorage.getItem("h_ai");
+        if (!hotelId) return null;
+        const appUrl = `${window.location.origin}/?hotel=${hotelId}`;
+        return (
+          <div style={{ 
+            background: "linear-gradient(135deg, #1f1f1f 0%, #161616 100%)", 
+            borderRadius: 16, padding: 20, marginBottom: 16,
+            border: "1px solid #2a2a2a"
+          }}>
+            <div style={{ fontSize: 15, fontWeight: 700, marginBottom: 14, color: "#fff" }}>🔗 Мини-приложение отеля</div>
+            <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
+              <a href={appUrl} target="_blank" rel="noopener noreferrer" style={{
+                display: "inline-flex", alignItems: "center", gap: 8,
+                padding: "12px 20px", borderRadius: 10,
+                background: "linear-gradient(135deg, #00d4aa 0%, #00a888 100%)",
+                color: "#000", fontWeight: 600, fontSize: 13,
+                textDecoration: "none",
+                boxShadow: "0 4px 15px rgba(0,212,170,0.3)"
+              }}>
+                📱 Открыть мини-приложение
+              </a>
+            </div>
+            <div style={{ marginTop: 12, fontSize: 12, color: "#666" }}>
+              Ссылка для клиентов: <code style={{ background: "#222", padding: "2px 6px", borderRadius: 4, color: "#00d4aa" }}>{appUrl}</code>
+            </div>
+          </div>
+        );
+      })()}
+
       {/* КОНТАКТЫ */}
       <div style={{ background: "var(--white)", borderRadius: "var(--r)", padding: 20, boxShadow: "var(--sh)", marginBottom: 16 }}>
         <div style={{ fontSize: 15, fontWeight: 700, marginBottom: 14 }}>📞 Контактные данные</div>
@@ -1291,7 +1323,7 @@ export function AdminAmoCRM({ showToast }) {
 
 // ── ОБЁРТКА ВСЕЙ АДМИНКИ ──────────────────────────────────────────────────────
 export function AdminPanel({ onExit, onLogout, isSuperAdmin = false, showToast }) {
-  const [page, setPage] = useState("dashboard");
+  const [page, setPage] = useState("homes");
   const settings = db.get("settings");
 
   // Переключение на отель по URL параметру при загрузке
@@ -1320,7 +1352,6 @@ export function AdminPanel({ onExit, onLogout, isSuperAdmin = false, showToast }
   };
 
   const nav = [
-    { id: "dashboard", ico: "📊", label: "Дашборд" },
     { id: "homes",     ico: "🏡", label: "Домики" },
     { id: "services",  ico: "✨", label: "Услуги" },
     { id: "promos",    ico: "🏷️", label: "Акции" },
@@ -1330,7 +1361,6 @@ export function AdminPanel({ onExit, onLogout, isSuperAdmin = false, showToast }
   ];
 
   const pages = {
-    dashboard: <AdminDashboard />,
     homes:     <AdminHomes showToast={showToast} />,
     services:  <AdminServices showToast={showToast} />,
     promos:    <AdminPromos showToast={showToast} />,
