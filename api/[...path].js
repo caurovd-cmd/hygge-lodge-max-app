@@ -1,15 +1,19 @@
+export const config = {
+  api: {
+    bodyParser: false,
+  },
+};
+
 export default async function handler(req, res) {
-  const path = req.url.replace('/api/', '/');
+  const path = req.url?.replace('/api/', '/') || '/';
   const backendUrl = `http://95.140.155.14:3000${path}`;
   
   try {
     const response = await fetch(backendUrl, {
       method: req.method,
       headers: {
-        ...req.headers,
-        host: undefined,
+        'Content-Type': 'application/json',
       },
-      body: req.method !== 'GET' && req.method !== 'HEAD' ? JSON.stringify(req.body) : undefined,
     });
     
     const data = await response.json();
