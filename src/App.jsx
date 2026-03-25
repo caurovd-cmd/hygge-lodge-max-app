@@ -30,16 +30,24 @@ export default function App() {
 
   // Переключение на отель по URL параметру
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const hotelId = params.get("hotel");
-    if (hotelId) {
-      db.switchTo("hygge_db_" + hotelId);
-    }
-    // Даем время на инициализацию БД
-    setTimeout(() => {
-      setSettings(db.get("settings"));
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const hotelId = params.get("hotel");
+      if (hotelId) {
+        db.switchTo("hygge_db_" + hotelId);
+      }
+      setTimeout(() => {
+        try {
+          setSettings(db.get("settings"));
+        } catch (e) {
+          console.error("Error getting settings:", e);
+        }
+        setLoading(false);
+      }, 300);
+    } catch (e) {
+      console.error("Error in useEffect:", e);
       setLoading(false);
-    }, 200);
+    }
   }, []);
 
   useEffect(() => { bridge.ready(); }, []);
