@@ -1003,7 +1003,7 @@ export function AdminAmoCRM({ showToast }) {
                   onChange={e => setCfg(c => ({ ...c, bonusFieldId: e.target.value }))}>
                   <option value="">— не выбрано —</option>
                   {(contactFields || [])
-                    .filter(f => !bonusSearch || (f.name || "").toLowerCase().includes(bonusSearch.toLowerCase()))
+                    .filter(f => !bonusSearch || ((f.name || "") + "").toLowerCase().includes(bonusSearch.toLowerCase()))
                     .map(f => (
                       <option key={f.id} value={String(f.id)}>
                         [{f.id}] {f.name} ({f.type})
@@ -1011,7 +1011,7 @@ export function AdminAmoCRM({ showToast }) {
                     ))}
                 </select>
                 {cfg.bonusFieldId && (() => {
-                  const sel = contactFields.find(f => String(f.id) === String(cfg.bonusFieldId));
+                  const sel = (contactFields || []).find(f => String(f.id) === String(cfg.bonusFieldId));
                   return sel ? (
                     <div style={{ fontSize: 11, color: "var(--green)", marginTop: 3 }}>
                       ✓ {sel.name} (#{sel.id})
@@ -1034,7 +1034,7 @@ export function AdminAmoCRM({ showToast }) {
                   onChange={e => setCfg(c => ({ ...c, nightsFieldId: e.target.value }))}>
                   <option value="">— не выбрано —</option>
                   {(contactFields || [])
-                    .filter(f => !nightsSearch || (f.name || "").toLowerCase().includes(nightsSearch.toLowerCase()))
+                    .filter(f => !nightsSearch || ((f.name || "") + "").toLowerCase().includes(nightsSearch.toLowerCase()))
                     .map(f => (
                       <option key={f.id} value={String(f.id)}>
                         [{f.id}] {f.name} ({f.type})
@@ -1042,7 +1042,7 @@ export function AdminAmoCRM({ showToast }) {
                     ))}
                 </select>
                 {cfg.nightsFieldId && (() => {
-                  const sel = contactFields.find(f => String(f.id) === String(cfg.nightsFieldId));
+                  const sel = (contactFields || []).find(f => String(f.id) === String(cfg.nightsFieldId));
                   return sel ? (
                     <div style={{ fontSize: 11, color: "var(--green)", marginTop: 3 }}>
                       ✓ {sel.name} (#{sel.id})
