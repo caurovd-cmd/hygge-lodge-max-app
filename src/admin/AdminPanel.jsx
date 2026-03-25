@@ -1174,7 +1174,8 @@ export function AdminPanel({ onExit, onLogout, isSuperAdmin = false, showToast }
   // Простые заглушки для promos и reviews (можно расширить)
   const AdminPromos = () => {
     const [promos, setPromos] = useState(() => db.getAll("promos") || []);
-    const [form, setForm] = useState({ title: "", discount: "", code: "", until: "", emoji: "🏷️", desc: "", active: true });
+    const defaultForm = { title: "", discount: "", code: "", until: "", emoji: "🏷️", desc: "", active: true, color: "#1e3a1e" };
+    const [form, setForm] = useState(defaultForm);
     const [edit, setEdit] = useState(null);
     useEffect(() => { return db.subscribe("promos", setPromos); }, []);
     const save = () => {
@@ -1183,7 +1184,7 @@ export function AdminPanel({ onExit, onLogout, isSuperAdmin = false, showToast }
       if (edit) { db.update("promos", edit.id, item); showToast("Акция обновлена"); }
       else { db.insert("promos", item); showToast("Акция добавлена"); }
       setEdit(null);
-      setForm({ title: "", discount: "", code: "", until: "", emoji: "🏷️", desc: "", active: true });
+      setForm(defaultForm);
     };
     return (
       <div className="admin-page">
@@ -1197,13 +1198,34 @@ export function AdminPanel({ onExit, onLogout, isSuperAdmin = false, showToast }
             <input className="inp" placeholder="Промокод" value={form.code} onChange={e => setForm(f => ({ ...f, code: e.target.value }))} />
             <input className="inp" placeholder="Действителен до" value={form.until} onChange={e => setForm(f => ({ ...f, until: e.target.value }))} />
           </div>
+          <div style={{ marginTop: 10 }}>
+            <label style={{ fontSize: 10, color: "#666", display: "block", marginBottom: 6 }}>Цвет карточки</label>
+            <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+              {["#1e3a1e", "#2a3020", "#1a2f2f", "#2d3748", "#744210", "#702459", "#1a365d", "#234e52"].map(c => (
+                <button
+                  key={c}
+                  type="button"
+                  onClick={() => setForm(f => ({ ...f, color: c }))}
+                  style={{
+                    width: 32, height: 32, borderRadius: 8, border: form.color === c ? "3px solid #fff" : "2px solid #444",
+                    background: c, cursor: "pointer",
+                  }}
+                />
+              ))}
+            </div>
+          </div>
           <textarea className="inp" placeholder="Описание" value={form.desc} onChange={e => setForm(f => ({ ...f, desc: e.target.value }))} style={{ marginTop: 10 }} />
           <button className="btn btn-green" onClick={save} style={{ marginTop: 12 }}>{edit ? "Сохранить" : "Добавить акцию"}</button>
         </div>
         <div className="table-wrap">
-          <table><thead><tr><th>Акция</th><th>Код</th><th></th></tr></thead>
+          <table><thead><tr><th>Цвет</th><th>Акция</th><th>Код</th><th></th></tr></thead>
             <tbody>{promos.map(p => (
-              <tr key={p.id}><td><b>{p.emoji} {p.title}</b><br/><span style={{ fontSize: 11, color: "#666" }}>{p.discount}</span></td><td><code style={{ background: "#222", padding: "4px 8px", borderRadius: 4 }}>{p.code}</code></td><td><button className="btn btn-sm" style={{ background: "#333", color: "#fff" }} onClick={() => { setEdit(p); setForm(p); }}>✏️</button></td></tr>
+              <tr key={p.id}>
+                <td><div style={{ width: 24, height: 24, borderRadius: 6, background: p.color || "#1e3a1e", border: "1px solid #444" }} /></td>
+                <td><b>{p.emoji} {p.title}</b><br/><span style={{ fontSize: 11, color: "#666" }}>{p.discount}</span></td>
+                <td><code style={{ background: "#222", padding: "4px 8px", borderRadius: 4 }}>{p.code}</code></td>
+                <td><button className="btn btn-sm" style={{ background: "#333", color: "#fff" }} onClick={() => { setEdit(p); setForm(p); }}>✏️</button></td>
+              </tr>
             ))}</tbody>
           </table>
         </div>
