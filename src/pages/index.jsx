@@ -1020,7 +1020,6 @@ export function PageAccount({ goTo, showToast }) {
 
   const settings = db.get("settings");
   const homes = db.getActive("homes");
-  const bookings = db.getAll("bookings");
   const levels = settings?.loyalty?.levels || DEFAULT_LOYALTY_LEVELS;
   const bonusPercent = settings?.loyalty?.bonusPercent || 5;
 
@@ -1042,8 +1041,8 @@ export function PageAccount({ goTo, showToast }) {
   const displayName = guestProfile.name || (user?.first_name ? `${user.first_name}${user.last_name ? " " + user.last_name : ""}` : null);
   const displayUsername = user?.username ? `@${user.username}` : guestProfile.phone;
 
-  const TAB_LABELS = ["Брони", "Лояльность", "Домики", "Настройки"];
-  const TAB_KEYS   = ["bookings", "loyalty", "homes", "settings"];
+  const TAB_LABELS = ["Лояльность", "Домики", "Настройки"];
+  const TAB_KEYS   = ["loyalty", "homes", "settings"];
 
   return (
     <>
@@ -1095,40 +1094,6 @@ export function PageAccount({ goTo, showToast }) {
           active={TAB_LABELS[TAB_KEYS.indexOf(tab)]}
           onChange={v => setTab(TAB_KEYS[TAB_LABELS.indexOf(v)])}
         />
-
-        {/* ── ТАБ: БРОНИ ── */}
-        {tab === "bookings" && (
-          <>
-            {bookings.length === 0
-              ? <Empty icon="📋" text="Бронирований пока нет" />
-              : bookings.map(o => (
-                <div key={o.id} style={{ background: "var(--white)", borderRadius: "var(--r)", padding: "14px 16px", boxShadow: "var(--sh)", marginBottom: 8 }}>
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 4 }}>
-                    <div style={{ fontSize: 15, fontWeight: 700 }}>{o.homeName}</div>
-                    <span className={`badge badge-${o.status === "done" ? "ok" : "up"}`}>
-                      {o.status === "done" ? "Завершено" : "Предстоит"}
-                    </span>
-                  </div>
-                  <div style={{ fontSize: 12, color: "var(--t2)", marginBottom: 8 }}>
-                    📅 {o.dateFrom} — {o.dateTo} · {o.nights} {o.nights === 1 ? "ночь" : o.nights < 5 ? "ночи" : "ночей"}
-                  </div>
-                  <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                    <span style={{ fontSize: 15, fontWeight: 700, color: "var(--green)" }}>{o.price.toLocaleString("ru")} ₽</span>
-                    {o.status === "done" && (
-                      <span style={{ fontSize: 11, color: "var(--t2)" }}>
-                        +{Math.floor(o.price * bonusPercent / 100)} бонусов
-                      </span>
-                    )}
-                  </div>
-                </div>
-              ))
-            }
-            <button className="btn btn-green" style={{ marginTop: 4 }}
-              onClick={() => bridge.openLink(contacts?.bookingUrl || "https://richlifevillage.ru/booking/?znms_widget_open=5101")}>
-              🗓 Новое бронирование
-            </button>
-          </>
-        )}
 
         {/* ── ТАБ: ЛОЯЛЬНОСТЬ ── */}
         {tab === "loyalty" && (
