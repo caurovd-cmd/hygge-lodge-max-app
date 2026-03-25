@@ -532,16 +532,45 @@ function SuperPanel({ onLogout, showToast }) {
 // ─────────────────────────────────────────────────────────────────────────────
 // ROOT
 // ─────────────────────────────────────────────────────────────────────────────
+}
+
 function SuperAdminApp() {
   const [toast, setToast] = useState(null);
-  const [screen, setScreen] = useState(() =>
-    sessionStorage.getItem(SS) === "1" ? "panel" : "auth"
-  );
+  const [error, setError] = useState(null);
+  const [screen, setScreen] = useState(() => {
+    try {
+      return sessionStorage.getItem(SS) === "1" ? "panel" : "auth";
+    } catch {
+      return "auth";
+    }
+  });
+
+  // Логируем ошибки для отладки
+  useEffect(() => {
+    window.onerror = (msg, url, line) => {
+      console.error("SuperAdmin Error:", msg, "line:", line);
+      setError(msg);
+    };
+  }, []);
 
   const handleLogout = () => {
-    sessionStorage.removeItem(SS);
+    try {
+      sessionStorage.removeItem(SS);
+    } catch {}
     setScreen("auth");
   };
+
+  if (error) {
+    return (
+      <div style={{ minHeight: "100dvh", background: BG, display: "flex", alignItems: "center", justifyContent: "center", padding: 20 }}>
+        <div style={{ ...card(), padding: 40, textAlign: "center", color: "#fca5a5" }}>
+          <div style={{ fontSize: 48, marginBottom: 16 }}>⚠️</div>
+          <div style={{ fontSize: 16 }}>Ошибка загрузки</div>
+          <div style={{ fontSize: 12, marginTop: 8, color: "#888" }}>{error}</div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <>
