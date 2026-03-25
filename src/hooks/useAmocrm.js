@@ -5,13 +5,14 @@
 // ВАЖНО: Долгосрочный токен выдаётся в разделе
 // "Настройки → Интеграции → Токены доступа" в вашем аккаунте AmoCRM.
 
-const DB_KEY = "hygge_lodge_db";
-
 function getAmoCfg() {
   try {
-    const raw = localStorage.getItem(DB_KEY);
+    // Получаем текущий ключ БД из db
+    const dbKey = window.__db_key || "hygge_lodge_db";
+    const raw = localStorage.getItem(dbKey);
     if (!raw) return null;
-    return JSON.parse(raw)?.settings?.amoCRM || null;
+    const data = JSON.parse(raw);
+    return data?.settings?.amoCRM || null;
   } catch { return null; }
 }
 

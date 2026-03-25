@@ -156,6 +156,10 @@ class Database {
           // Версия совпадает — используем сохранённые данные,
           // но подтягиваем новые поля настроек (если их ещё нет)
           this._data = parsed;
+          // Устанавливаем глобальный ключ
+          if (typeof window !== "undefined") {
+            window.__db_key = this._key;
+          }
           this._migrateSettings();
           this._migrateData();
           return;
@@ -164,6 +168,10 @@ class Database {
     } catch (e) {}
     // Первый запуск — seed
     this._data = JSON.parse(JSON.stringify(SEED_DATA));
+    // Устанавливаем глобальный ключ
+    if (typeof window !== "undefined") {
+      window.__db_key = this._key;
+    }
     this._persist();
   }
 
@@ -278,6 +286,10 @@ class Database {
     this._key = key;
     this._data = null;
     this._listeners = {};
+    // Устанавливаем глобальный ключ для использования в сервисах
+    if (typeof window !== "undefined") {
+      window.__db_key = key;
+    }
     this._init();
     // Если пространство создалось впервые (нет сохранённого имени) и передано имя — применяем
     if (initName && this._data?.settings?.siteName === SEED_DATA.settings.siteName) {
