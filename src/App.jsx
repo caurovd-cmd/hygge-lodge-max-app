@@ -26,7 +26,7 @@ export default function App() {
   const [navTab, setNavTab]   = useState("main");
   const [toast, setToast]     = useState(null);
   const [loading, setLoading] = useState(true);
-  const [settings, setSettings] = useState(() => db.get("settings"));
+  const [settings, setSettings] = useState(null);
 
   // Переключение на отель по URL параметру
   useEffect(() => {
@@ -35,7 +35,11 @@ export default function App() {
     if (hotelId) {
       db.switchTo("hygge_db_" + hotelId);
     }
-    setTimeout(() => setLoading(false), 100);
+    // Даем время на инициализацию БД
+    setTimeout(() => {
+      setSettings(db.get("settings"));
+      setLoading(false);
+    }, 200);
   }, []);
 
   useEffect(() => { bridge.ready(); }, []);
