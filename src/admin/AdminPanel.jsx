@@ -1151,15 +1151,6 @@ export function AdminPanel({ onExit, onLogout, isSuperAdmin = false, showToast }
     { id: "settings",  ico: "⚙️", label: "Настройки" },
   ];
 
-  const pages = {
-    homes:     <AdminHomes showToast={showToast} />,
-    services:  <AdminServices showToast={showToast} />,
-    promos:    <AdminPromos showToast={showToast} />,
-    reviews:   <AdminReviews showToast={showToast} />,
-    amocrm:   <AdminAmoCRM showToast={showToast} />,
-    settings:  <AdminSettings showToast={showToast} />,
-  };
-
   // Простые заглушки для promos и reviews (можно расширить)
   const AdminPromos = () => {
     const [promos, setPromos] = useState(() => db.getAll("promos") || []);
@@ -1215,6 +1206,15 @@ export function AdminPanel({ onExit, onLogout, isSuperAdmin = false, showToast }
         </div>
       </div>
     );
+  };
+
+  const pages = {
+    homes:     <AdminHomes showToast={showToast} />,
+    services:  <AdminServices showToast={showToast} />,
+    promos:    <AdminPromos showToast={showToast} />,
+    reviews:   <AdminReviews showToast={showToast} />,
+    amocrm:   <AdminAmoCRM showToast={showToast} />,
+    settings:  <AdminSettings showToast={showToast} />,
   };
 
   return (
