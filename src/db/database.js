@@ -225,11 +225,11 @@ class Database {
 
   // ── CRUD ──────────────────────────────────────────
   getAll(table) {
-    return JSON.parse(JSON.stringify(this._data[table] || []));
+    return JSON.parse(JSON.stringify(this._data?.[table] || []));
   }
 
   getById(table, id) {
-    const list = this._data[table] || [];
+    const list = this._data?.[table] || [];
     const item = list.find(i => i.id === id);
     return item ? JSON.parse(JSON.stringify(item)) : null;
   }
@@ -239,10 +239,11 @@ class Database {
   }
 
   get(key) {
-    return JSON.parse(JSON.stringify(this._data[key] || null));
+    return JSON.parse(JSON.stringify(this._data?.[key] || null));
   }
 
   set(key, value) {
+    if (!this._data) this._data = {};
     this._data[key] = value;
     this._persist();
     this._emit(key);
@@ -250,6 +251,7 @@ class Database {
   }
 
   insert(table, item) {
+    if (!this._data) this._data = {};
     if (!this._data[table]) this._data[table] = [];
     const newItem = { ...item, id: Date.now() };
     this._data[table].push(newItem);
@@ -259,6 +261,7 @@ class Database {
   }
 
   update(table, id, patch) {
+    if (!this._data?.[table]) return null;
     const idx = this._data[table].findIndex(i => i.id === id);
     if (idx === -1) return null;
     this._data[table][idx] = { ...this._data[table][idx], ...patch };
@@ -268,6 +271,7 @@ class Database {
   }
 
   delete(table, id) {
+    if (!this._data?.[table]) return;
     this._data[table] = this._data[table].filter(i => i.id !== id);
     this._persist();
     this._emit(table);
