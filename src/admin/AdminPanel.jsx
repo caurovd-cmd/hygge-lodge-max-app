@@ -1234,8 +1234,8 @@ export function AdminPanel({ onExit, onLogout, isSuperAdmin = false, showToast }
     const [bonusPercent, setBonusPercent] = useState(() => settings?.loyalty?.bonusPercent || 5);
     const [levels, setLevels] = useState(() => settings?.loyalty?.levels || [
       { name: "Новичок", emoji: "🌱", minNights: 0, discount: 0, perks: ["Добро пожаловать!"] },
-      { name: "Постоянный", emoji: "🏕️", minNights: 3, discount: 5, perks: ["Скидка 5%", "Ранний заезд"] },
-      { name: "VIP", emoji: "🌟", minNights: 10, discount: 10, perks: ["Скидка 10%", "Поздний выезд", "Подарок"] },
+      { name: "Постоянный", emoji: "🏕️", minNights: 3, discount: 5, perks: ["Кешбек 5%", "Ранний заезд"] },
+      { name: "VIP", emoji: "🌟", minNights: 10, discount: 10, perks: ["Кешбек 10%", "Поздний выезд", "Подарок"] },
     ]);
 
     useEffect(() => { return db.subscribe("settings", s => { setSettings(s); setBonusPercent(s?.loyalty?.bonusPercent || 5); setLevels(s?.loyalty?.levels || []); }); }, []);
@@ -1279,7 +1279,7 @@ export function AdminPanel({ onExit, onLogout, isSuperAdmin = false, showToast }
               onChange={e => setBonusPercent(parseInt(e.target.value) || 0)}
               style={{ width: 80 }}
             />
-            <span style={{ color: "#888" }}>% от суммы брони</span>
+            <span style={{ color: "#888" }}>% кешбек от суммы брони</span>
           </div>
         </div>
 
@@ -1309,7 +1309,7 @@ export function AdminPanel({ onExit, onLogout, isSuperAdmin = false, showToast }
                 <input className="inp" type="number" value={level.minNights} onChange={e => updateLevel(idx, "minNights", parseInt(e.target.value) || 0)} />
               </div>
               <div>
-                <label style={{ fontSize: 10, color: "#666", display: "block", marginBottom: 4 }}>Скидка %</label>
+                <label style={{ fontSize: 10, color: "#666", display: "block", marginBottom: 4 }}>Кешбек %</label>
                 <input className="inp" type="number" value={level.discount} onChange={e => updateLevel(idx, "discount", parseInt(e.target.value) || 0)} />
               </div>
             </div>
