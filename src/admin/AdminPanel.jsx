@@ -1224,13 +1224,9 @@ export function AdminPanel({ onExit, onLogout, isSuperAdmin = false, showToast }
               type="range" 
               min="0" max="1" step="0.1" 
               value={form.bgOpacity ?? 0.5} 
-              onChange={e => setForm(f => ({ ...f, bgOpacity: parseFloat(e.target.value) })}
+              onChange={(e) => setForm(f => ({ ...f, bgOpacity: parseFloat(e.target.value) }))}
               style={{ width: "100%" }}
             />
-          </div>
-                />
-              ))}
-            </div>
           </div>
           <textarea className="inp" placeholder="Описание" value={form.desc} onChange={e => setForm(f => ({ ...f, desc: e.target.value }))} style={{ marginTop: 10 }} />
           <button className="btn btn-green" onClick={save} style={{ marginTop: 12 }}>{edit ? "Сохранить" : "Добавить акцию"}</button>
