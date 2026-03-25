@@ -28,38 +28,37 @@ export default function App() {
   const [loading, setLoading] = useState(true);
   const [settings, setSettings] = useState(null);
 
+// ── ROOT APP ──────────────────────────────────────────────────────────────────
+export default function App() {
+  const [page, setPage]       = useState("main");
+  const [pageData, setPageData] = useState(null);
+  const [navTab, setNavTab]   = useState("main");
+  const [toast, setToast]     = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [settings, setSettings] = useState({});
+
   // Переключение на отель по URL параметру
   useEffect(() => {
-    try {
-      const params = new URLSearchParams(window.location.search);
-      const hotelId = params.get("hotel");
-      if (hotelId) {
-        db.switchTo("hygge_db_" + hotelId);
-      }
-      setTimeout(() => {
-        try {
-          setSettings(db.get("settings"));
-        } catch (e) {
-          console.error("Error getting settings:", e);
-        }
-        setLoading(false);
-      }, 300);
-    } catch (e) {
-      console.error("Error in useEffect:", e);
-      setLoading(false);
+    const params = new URLSearchParams(window.location.search);
+    const hotelId = params.get("hotel");
+    if (hotelId) {
+      db.switchTo("hygge_db_" + hotelId);
     }
   }, []);
 
-  useEffect(() => { bridge.ready(); }, []);
-  useEffect(() => { return db.subscribe("settings", setSettings); }, []);
+  useEffect(() => { 
+    bridge.ready(); 
+  }, []);
 
-  if (loading) {
-    return (
-      <div style={{ minHeight: "100vh", background: "var(--bg)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-        Загрузка...
-      </div>
-    );
-  }
+  useEffect(() => {
+    // Подписываемся на изменения settings
+    const unsubscribe = db.subscribe("settings", (s) => {
+      setSettings(s || {});
+      // Даём небольшую задержку чтобы показать контент
+      setTimeout(() => setLoading(false), 100);
+    });
+    return unsubscribe;
+  }, []);
 
   const showToast = useCallback((msg) => setToast(msg), []);
 
