@@ -271,7 +271,8 @@ body {
 .promo-card {
   border-radius: var(--r); padding: 20px; margin-bottom: 12px;
   cursor: pointer;
-  box-shadow: var(--sh-m);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+  border: 1px solid rgba(255,255,255,0.15);
 }
 .promo-badge {
   display: inline-block; background: #fff; border-radius: 20px;
