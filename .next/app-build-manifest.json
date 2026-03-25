@@ -7,19 +7,40 @@
       "static/chunks/main-app-959aa8aa303c5896.js",
       "static/chunks/app/_not-found/page-2a2d6ee4dcc430eb.js"
     ],
+    "/api/hotels/[hotelId]/data/route": [
+      "static/chunks/webpack-a6c12c4b5a9875ac.js",
+      "static/chunks/4bd1b696-c023c6e3521b1417.js",
+      "static/chunks/255-38b49df12a94ee57.js",
+      "static/chunks/main-app-959aa8aa303c5896.js",
+      "static/chunks/app/api/hotels/[hotelId]/data/route-8689497ae0b3e3a0.js"
+    ],
+    "/api/hotels/[hotelId]/settings/route": [
+      "static/chunks/webpack-a6c12c4b5a9875ac.js",
+      "static/chunks/4bd1b696-c023c6e3521b1417.js",
+      "static/chunks/255-38b49df12a94ee57.js",
+      "static/chunks/main-app-959aa8aa303c5896.js",
+      "static/chunks/app/api/hotels/[hotelId]/settings/route-8689497ae0b3e3a0.js"
+    ],
+    "/api/hotels/route": [
+      "static/chunks/webpack-a6c12c4b5a9875ac.js",
+      "static/chunks/4bd1b696-c023c6e3521b1417.js",
+      "static/chunks/255-38b49df12a94ee57.js",
+      "static/chunks/main-app-959aa8aa303c5896.js",
+      "static/chunks/app/api/hotels/route-8689497ae0b3e3a0.js"
+    ],
+    "/api/test/route": [
+      "static/chunks/webpack-a6c12c4b5a9875ac.js",
+      "static/chunks/4bd1b696-c023c6e3521b1417.js",
+      "static/chunks/255-38b49df12a94ee57.js",
+      "static/chunks/main-app-959aa8aa303c5896.js",
+      "static/chunks/app/api/test/route-8689497ae0b3e3a0.js"
+    ],
     "/layout": [
       "static/chunks/webpack-a6c12c4b5a9875ac.js",
       "static/chunks/4bd1b696-c023c6e3521b1417.js",
       "static/chunks/255-38b49df12a94ee57.js",
       "static/chunks/main-app-959aa8aa303c5896.js",
-      "static/chunks/app/layout-760ffc736bfb83bf.js"
-    ],
-    "/api/[...path]/route": [
-      "static/chunks/webpack-a6c12c4b5a9875ac.js",
-      "static/chunks/4bd1b696-c023c6e3521b1417.js",
-      "static/chunks/255-38b49df12a94ee57.js",
-      "static/chunks/main-app-959aa8aa303c5896.js",
-      "static/chunks/app/api/[...path]/route-760ffc736bfb83bf.js"
+      "static/chunks/app/layout-8689497ae0b3e3a0.js"
     ],
     "/page": [
       "static/chunks/webpack-a6c12c4b5a9875ac.js",

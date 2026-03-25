@@ -1,5 +1,8 @@
 {
+  "/api/hotels/[hotelId]/data/route": "app/api/hotels/[hotelId]/data/route.js",
+  "/api/hotels/[hotelId]/settings/route": "app/api/hotels/[hotelId]/settings/route.js",
+  "/api/hotels/route": "app/api/hotels/route.js",
+  "/api/test/route": "app/api/test/route.js",
   "/_not-found/page": "app/_not-found/page.js",
-  "/api/[...path]/route": "app/api/[...path]/route.js",
   "/page": "app/page.js"
 }

@@ -20,12 +20,20 @@
   },
   "dynamicRoutes": [
     {
-      "page": "/api/[...path]",
-      "regex": "^/api/(.+?)(?:/)?$",
+      "page": "/api/hotels/[hotelId]/data",
+      "regex": "^/api/hotels/([^/]+?)/data(?:/)?$",
       "routeKeys": {
-        "nxtPpath": "nxtPpath"
+        "nxtPhotelId": "nxtPhotelId"
       },
-      "namedRegex": "^/api/(?<nxtPpath>.+?)(?:/)?$"
+      "namedRegex": "^/api/hotels/(?<nxtPhotelId>[^/]+?)/data(?:/)?$"
+    },
+    {
+      "page": "/api/hotels/[hotelId]/settings",
+      "regex": "^/api/hotels/([^/]+?)/settings(?:/)?$",
+      "routeKeys": {
+        "nxtPhotelId": "nxtPhotelId"
+      },
+      "namedRegex": "^/api/hotels/(?<nxtPhotelId>[^/]+?)/settings(?:/)?$"
     }
   ],
   "staticRoutes": [
