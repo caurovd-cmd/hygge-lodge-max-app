@@ -255,6 +255,85 @@ function ChangePasswordBlock({ showToast }) {
   );
 }
 
+// ── ADMIN: УСЛУГИ ───────────────────────────────────────────────────────────
+export function AdminServices({ showToast }) {
+  const [services, setServices] = useState(() => db.getAll("services") || []);
+  const [edit, setEdit] = useState(null);
+  const [form, setForm] = useState({ name: "", price: "", duration: "", emoji: "✨", desc: "", cat: "SPA", active: true });
+
+  useEffect(() => { return db.subscribe("services", setServices); }, []);
+
+  const save = () => {
+    if (!form.name) { showToast("Введите название"); return; }
+    const item = { 
+      ...form, 
+      price: parseInt(form.price) || 0,
+      id: edit?.id || Date.now()
+    };
+    if (edit) {
+      db.update("services", edit.id, item);
+      showToast("Услуга обновлена");
+    } else {
+      db.insert("services", item);
+      showToast("Услуга добавлена");
+    }
+    setEdit(null);
+    setForm({ name: "", price: "", duration: "", emoji: "✨", desc: "", cat: "SPA", active: true });
+  };
+
+  const del = (id) => { if (confirm("Удалить услугу?")) { db.delete("services", id); showToast("Удалено"); }};
+
+  return (
+    <div className="admin-page">
+      <div className="admin-page-title">✨ Услуги</div>
+      
+      {/* Форма добавления/редактирования */}
+      <div style={{ background: "linear-gradient(145deg, #1a1a1a 0%, #141414 100%)", borderRadius: 16, padding: 20, marginBottom: 16, border: "1px solid #2a2a2a" }}>
+        <div style={{ fontSize: 14, fontWeight: 700, marginBottom: 12, color: "#fff" }}>{edit ? "Редактировать" : "Добавить услугу"}</div>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+          <input className="inp" placeholder="Название" value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} />
+          <input className="inp" placeholder="Цена ₽" type="number" value={form.price} onChange={e => setForm(f => ({ ...f, price: e.target.value }))} />
+        </div>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginTop: 10 }}>
+          <input className="inp" placeholder="Длительность (напр. 2 ч)" value={form.duration} onChange={e => setForm(f => ({ ...f, duration: e.target.value }))} />
+          <select className="inp" value={form.cat} onChange={e => setForm(f => ({ ...f, cat: e.target.value }))}>
+            <option value="SPA">SPA</option>
+            <option value="Питание">Питание</option>
+            <option value="Активности">Активности</option>
+          </select>
+        </div>
+        <textarea className="inp" placeholder="Описание" value={form.desc} onChange={e => setForm(f => ({ ...f, desc: e.target.value }))} style={{ marginTop: 10, minHeight: 60 }} />
+        <div style={{ display: "flex", gap: 10, marginTop: 12 }}>
+          <button className="btn btn-green" onClick={save} style={{ flex: 1 }}>{edit ? "Сохранить" : "Добавить"}</button>
+          {edit && <button className="btn" style={{ background: "#444", color: "#fff" }} onClick={() => { setEdit(null); setForm({ name: "", price: "", duration: "", emoji: "✨", desc: "", cat: "SPA", active: true }); }}>Отмена</button>}
+        </div>
+      </div>
+
+      {/* Список */}
+      <div className="table-wrap">
+        <table>
+          <thead><tr><th>Название</th><th>Цена</th><th>Категория</th><th></th></tr></thead>
+          <tbody>
+            {services.map(s => (
+              <tr key={s.id}>
+                <td><b>{s.emoji} {s.name}</b><br /><span style={{ fontSize: 11, color: "#666" }}>{s.duration}</span></td>
+                <td style={{ color: "#00d4aa", fontWeight: 700 }}>{s.price?.toLocaleString()} ₽</td>
+                <td><span className="badge">{s.cat}</span></td>
+                <td>
+                  <div className="table-actions">
+                    <button className="btn btn-sm" style={{ background: "#333", color: "#fff" }} onClick={() => { setEdit(s); setForm({ ...s, price: String(s.price) }); }}>✏️</button>
+                    <button className="btn btn-sm" style={{ background: "#fef2f2", color: "#dc2626" }} onClick={() => del(s.id)}>🗑️</button>
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+
 export function AdminSettings({ showToast }) {
   const [contacts, setContacts] = useState(db.get("contacts") || {});
   const [settings, setSettings] = useState(db.get("settings") || {});
@@ -1079,6 +1158,63 @@ export function AdminPanel({ onExit, onLogout, isSuperAdmin = false, showToast }
     reviews:   <AdminReviews showToast={showToast} />,
     amocrm:   <AdminAmoCRM showToast={showToast} />,
     settings:  <AdminSettings showToast={showToast} />,
+  };
+
+  // Простые заглушки для promos и reviews (можно расширить)
+  const AdminPromos = () => {
+    const [promos, setPromos] = useState(() => db.getAll("promos") || []);
+    const [form, setForm] = useState({ title: "", discount: "", code: "", until: "", emoji: "🏷️", desc: "", active: true });
+    const [edit, setEdit] = useState(null);
+    useEffect(() => { return db.subscribe("promos", setPromos); }, []);
+    const save = () => {
+      if (!form.title) { showToast("Введите название"); return; }
+      const item = { ...form, id: edit?.id || Date.now() };
+      if (edit) { db.update("promos", edit.id, item); showToast("Акция обновлена"); }
+      else { db.insert("promos", item); showToast("Акция добавлена"); }
+      setEdit(null);
+      setForm({ title: "", discount: "", code: "", until: "", emoji: "🏷️", desc: "", active: true });
+    };
+    return (
+      <div className="admin-page">
+        <div className="admin-page-title">🏷️ Акции</div>
+        <div style={{ background: "linear-gradient(145deg, #1a1a1a 0%, #141414 100%)", borderRadius: 16, padding: 20, marginBottom: 16, border: "1px solid #2a2a2a" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+            <input className="inp" placeholder="Название" value={form.title} onChange={e => setForm(f => ({ ...f, title: e.target.value }))} />
+            <input className="inp" placeholder="Скидка ( напр. -20%)" value={form.discount} onChange={e => setForm(f => ({ ...f, discount: e.target.value }))} />
+          </div>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginTop: 10 }}>
+            <input className="inp" placeholder="Промокод" value={form.code} onChange={e => setForm(f => ({ ...f, code: e.target.value }))} />
+            <input className="inp" placeholder="Действителен до" value={form.until} onChange={e => setForm(f => ({ ...f, until: e.target.value }))} />
+          </div>
+          <textarea className="inp" placeholder="Описание" value={form.desc} onChange={e => setForm(f => ({ ...f, desc: e.target.value }))} style={{ marginTop: 10 }} />
+          <button className="btn btn-green" onClick={save} style={{ marginTop: 12 }}>{edit ? "Сохранить" : "Добавить акцию"}</button>
+        </div>
+        <div className="table-wrap">
+          <table><thead><tr><th>Акция</th><th>Код</th><th></th></tr></thead>
+            <tbody>{promos.map(p => (
+              <tr key={p.id}><td><b>{p.emoji} {p.title}</b><br/><span style={{ fontSize: 11, color: "#666" }}>{p.discount}</span></td><td><code style={{ background: "#222", padding: "4px 8px", borderRadius: 4 }}>{p.code}</code></td><td><button className="btn btn-sm" style={{ background: "#333", color: "#fff" }} onClick={() => { setEdit(p); setForm(p); }}>✏️</button></td></tr>
+            ))}</tbody>
+          </table>
+        </div>
+      </div>
+    );
+  };
+
+  const AdminReviews = () => {
+    const [reviews, setReviews] = useState(() => db.getAll("reviews") || []);
+    useEffect(() => { return db.subscribe("reviews", setReviews); }, []);
+    return (
+      <div className="admin-page">
+        <div className="admin-page-title">⭐ Отзывы</div>
+        <div className="table-wrap">
+          <table><thead><tr><th>Автор</th><th>Текст</th><th>Статус</th></tr></thead>
+            <tbody>{reviews.map(r => (
+              <tr key={r.id}><td><b>{r.name}</b></td><td style={{ maxWidth: 300 }}>{r.text?.slice(0, 60)}...</td><td><span className={`badge badge-${r.approved ? "ok" : "up"}`}>{r.approved ? "Опубликован" : "На модерации"}</span></td></tr>
+            ))}</tbody>
+          </table>
+        </div>
+      </div>
+    );
   };
 
   return (
