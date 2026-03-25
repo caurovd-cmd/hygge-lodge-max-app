@@ -1174,7 +1174,7 @@ export function AdminPanel({ onExit, onLogout, isSuperAdmin = false, showToast }
   // Простые заглушки для promos и reviews (можно расширить)
   const AdminPromos = () => {
     const [promos, setPromos] = useState(() => db.getAll("promos") || []);
-    const defaultForm = { title: "", discount: "", code: "", until: "", emoji: "🏷️", desc: "", active: true, color: "#1e3a1e" };
+    const defaultForm = { title: "", discount: "", code: "", until: "", emoji: "🏷️", desc: "", active: true, color: "#1e3a1e", bgImage: "", bgOpacity: 0.5 };
     const [form, setForm] = useState(defaultForm);
     const [edit, setEdit] = useState(null);
     useEffect(() => { return db.subscribe("promos", setPromos); }, []);
@@ -1210,6 +1210,24 @@ export function AdminPanel({ onExit, onLogout, isSuperAdmin = false, showToast }
                     width: 32, height: 32, borderRadius: 8, border: form.color === c ? "3px solid #fff" : "2px solid #444",
                     background: c, cursor: "pointer",
                   }}
+                />
+              ))}
+            </div>
+          </div>
+          <div style={{ marginTop: 10 }}>
+            <label style={{ fontSize: 10, color: "#666", display: "block", marginBottom: 4 }}>Фоновая картинка (URL)</label>
+            <input className="inp" placeholder="https://..." value={form.bgImage || ""} onChange={e => setForm(f => ({ ...f, bgImage: e.target.value }))} />
+          </div>
+          <div style={{ marginTop: 10 }}>
+            <label style={{ fontSize: 10, color: "#666", display: "block", marginBottom: 4 }}>Прозрачность картинки: {form.bgOpacity ?? 0.5}</label>
+            <input 
+              type="range" 
+              min="0" max="1" step="0.1" 
+              value={form.bgOpacity ?? 0.5} 
+              onChange={e => setForm(f => ({ ...f, bgOpacity: parseFloat(e.target.value) })}
+              style={{ width: "100%" }}
+            />
+          </div>
                 />
               ))}
             </div>

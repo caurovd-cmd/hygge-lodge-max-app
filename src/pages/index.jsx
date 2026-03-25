@@ -414,18 +414,39 @@ export function PagePromos({ showToast }) {
     <div style={{ padding: "0 16px" }}>
       <div className="sec-title" style={{ padding: "16px 0 12px" }}>Акции и скидки</div>
       {promos.length === 0 && <Empty icon="🏷️" title="Нет активных акций" />}
-      {promos.map(p => (
-        <div key={p.id} className="promo-card" style={{ background: p.color }}
-          onClick={() => showToast(`✓ Промокод скопирован: ${p.code}`)}>
-          <div className="promo-badge">{p.discount}</div>
-          <div className="promo-title">{p.emoji} {p.title}</div>
-          <div className="promo-desc">{p.desc}</div>
-          <div className="promo-code-row">
-            <span className="promo-code">{p.code}</span>
-            <span className="promo-until">до {p.until}</span>
+      {promos.map(p => {
+        const bgStyle = p.bgImage 
+          ? { 
+              backgroundImage: `url(${p.bgImage})`, 
+              backgroundSize: "cover", 
+              backgroundPosition: "center",
+              position: "relative" 
+            }
+          : { background: p.color || "#1e3a1e" };
+        
+        return (
+          <div key={p.id} className="promo-card" style={bgStyle}
+            onClick={() => showToast(`✓ Промокод скопирован: ${p.code}`)}>
+            {p.bgImage && (
+              <div style={{
+                position: "absolute", inset: 0,
+                background: p.color || "#000",
+                opacity: p.bgOpacity ?? 0.5,
+                zIndex: 0,
+              }} />
+            )}
+            <div style={{ position: "relative", zIndex: 1 }}>
+              <div className="promo-badge">{p.discount}</div>
+              <div className="promo-title">{p.emoji} {p.title}</div>
+              <div className="promo-desc">{p.desc}</div>
+              <div className="promo-code-row">
+                <span className="promo-code">{p.code}</span>
+                <span className="promo-until">до {p.until}</span>
+              </div>
+            </div>
           </div>
-        </div>
-      ))}
+        );
+      })}
       <div style={{ height: 8 }} />
     </div>
   );
