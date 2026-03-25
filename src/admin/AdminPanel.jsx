@@ -1228,16 +1228,6 @@ export function AdminPanel({ onExit, onLogout, isSuperAdmin = false, showToast }
     );
   };
 
-  const pages = {
-    homes:     <AdminHomes showToast={showToast} />,
-    services:  <AdminServices showToast={showToast} />,
-    promos:    <AdminPromos showToast={showToast} />,
-    reviews:   <AdminReviews showToast={showToast} />,
-    amocrm:   <AdminAmoCRM showToast={showToast} />,
-    loyalty:  <AdminLoyalty showToast={showToast} />,
-    settings:  <AdminSettings showToast={showToast} />,
-  };
-
   // ── ADMIN: ЛОЯЛЬНОСТЬ ───────────────────────────────────────────────────────
   const AdminLoyalty = () => {
     const [settings, setSettings] = useState(() => db.get("settings") || {});
@@ -1340,6 +1330,16 @@ export function AdminPanel({ onExit, onLogout, isSuperAdmin = false, showToast }
         <button className="btn btn-green" onClick={save}>Сохранить настройки</button>
       </div>
     );
+  };
+
+  const pages = {
+    homes:     <AdminHomes showToast={showToast} />,
+    services:  <AdminServices showToast={showToast} />,
+    promos:    <AdminPromos showToast={showToast} />,
+    reviews:   <AdminReviews showToast={showToast} />,
+    amocrm:   <AdminAmoCRM showToast={showToast} />,
+    loyalty:  <AdminLoyalty showToast={showToast} />,
+    settings:  <AdminSettings showToast={showToast} />,
   };
 
   return (
