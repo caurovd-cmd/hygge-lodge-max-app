@@ -225,17 +225,19 @@ class Database {
 
   // ── CRUD ──────────────────────────────────────────
   getAll(table) {
-    return JSON.parse(JSON.stringify(this._data?.[table] || []));
+    const data = this._data || {};
+    return JSON.parse(JSON.stringify(data[table] || []));
   }
 
   getById(table, id) {
-    const list = this._data?.[table] || [];
+    const list = (this._data || {})[table] || [];
     const item = list.find(i => i.id === id);
     return item ? JSON.parse(JSON.stringify(item)) : null;
   }
 
   getActive(table) {
-    return this.getAll(table).filter(i => i.active !== false);
+    const all = this.getAll(table);
+    return (all || []).filter(i => i.active !== false);
   }
 
   get(key) {

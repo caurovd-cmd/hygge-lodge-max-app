@@ -466,7 +466,7 @@ export function PageHowToGet() {
 
 // ── PAGE: ОТЗЫВЫ ──────────────────────────────────────────────────────────────
 export function PageReviews({ showToast }) {
-  const [allReviews, setAllReviews] = useState(db.getAll("reviews").filter(r => r.approved));
+  const [allReviews, setAllReviews] = useState(() => (db.getAll("reviews") || []).filter(r => r.approved));
   const [form,    setForm]    = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -487,7 +487,7 @@ export function PageReviews({ showToast }) {
     if (!yandexOrgId || allReviews.some(r => r.source === "yandex")) return;
     setLoading(true);
     syncYandexReviews()
-      .then(() => setAllReviews(db.getAll("reviews").filter(r => r.approved)))
+      .then(() => setAllReviews((db.getAll("reviews") || []).filter(r => r.approved)))
       .catch(() => {}) // тихий фейл — покажем кэш
       .finally(() => setLoading(false));
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -504,7 +504,7 @@ export function PageReviews({ showToast }) {
     setLoading(true);
     try {
       const loaded = await syncYandexReviews();
-      setAllReviews(db.getAll("reviews").filter(r => r.approved));
+      setAllReviews((db.getAll("reviews") || []).filter(r => r.approved));
       showToast(`✅ Обновлено: ${loaded.length} отзывов с Яндекса`);
     } catch (e) {
       showToast(`❌ ${e.message}`);
